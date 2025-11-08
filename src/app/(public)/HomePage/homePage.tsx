@@ -10,6 +10,11 @@ import {
   useState,
 } from "react";
 
+import { DurationControls } from "@/app/components/Cards/DurationControls/durationControls";
+import { QuickStats } from "@/app/components/Cards/QuickStats/quickStats";
+import { Clock } from "@/app/components/Clock/clock";
+import { TopBar } from "@/app/components/TopBar/topBar";
+
 import styles from "./homePage.module.css";
 
 function formatTime(totalSeconds: number) {
@@ -24,6 +29,22 @@ function formatTime(totalSeconds: number) {
 
 export default function HomePage() {
   const durationPresets = useMemo(() => [15, 25, 45], []);
+  const phases = useMemo(
+    () => [
+      { id: "focus", label: "Focus", isActive: true },
+      { id: "short-break", label: "Short break" },
+      { id: "long-break", label: "Long break" },
+    ],
+    [],
+  );
+  const quickStats = useMemo(
+    () => [
+      { label: "Sessões hoje", value: "3" },
+      { label: "Total focado", value: "1h 15m" },
+      { label: "Próxima pausa longa", value: "2 ciclos" },
+    ],
+    [],
+  );
   const [selectedDuration, setSelectedDuration] = useState<number>(() => durationPresets[1]);
   const [remainingSeconds, setRemainingSeconds] = useState<number>(() => durationPresets[1] * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -150,85 +171,25 @@ export default function HomePage() {
       <span className={styles.cornerBrand}>
         pomodoro<span>mono</span>
       </span>
-      <div className={styles.topBar}>
-        <div className={styles.phases}>
-          <button type="button" className={`${styles.phase} ${styles.phaseActive}`}>
-            Focus
-          </button>
-          <button type="button" className={styles.phase}>
-            Short break
-          </button>
-          <button type="button" className={styles.phase}>
-            Long break
-          </button>
-        </div>
-      </div>
+      <TopBar phases={phases} />
       <span className={styles.cornerVersion}>v1.0</span>
 
       <div className={styles.timerRegion}>
-        <div className={styles.quickStats}>
-          <div className={styles.statCard}>
-            <span className={styles.statLabel}>Sessões hoje</span>
-            <span className={styles.statValue}>3</span>
-          </div>
-          <div className={styles.statCard}>
-            <span className={styles.statLabel}>Total focado</span>
-            <span className={styles.statValue}>1h 15m</span>
-          </div>
-          <div className={styles.statCard}>
-            <span className={styles.statLabel}>Próxima pausa longa</span>
-            <span className={styles.statValue}>2 ciclos</span>
-          </div>
-        </div>
-
-        <div className={styles.timerDisplay}>
-          <div
-            className={styles.radialWrapper}
-            style={{ transform: `scale(${radialScale})` }}
-            data-finished={hasFinished}
-          >
-            <span className={styles.radialGlow} />
-            <span className={styles.radialBase} />
-            <span className={styles.radialProgress} style={radialProgressStyle} />
-            <span className={styles.radialTicks} />
-            <span className={styles.timerValue}>{timerValue}</span>
-          </div>
-        </div>
-
-        <aside className={styles.durationControls}>
-          <div className={styles.durationSelector}>
-            {durationPresets.map((minutes) => (
-              <button
-                key={minutes}
-                type="button"
-                className={`${styles.durationOption} ${
-                  minutes === selectedDuration ? styles.durationActive : ""
-                }`}
-                onClick={() => handleDurationSelect(minutes)}
-              >
-                {minutes}m
-              </button>
-            ))}
-          </div>
-
-          <form className={styles.customDuration} onSubmit={handleCustomDurationSubmit}>
-            <label htmlFor="custom-duration" className={styles.srOnly}>
-              Duração personalizada em minutos
-            </label>
-            <input
-              id="custom-duration"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={3}
-              placeholder="Custom"
-              value={customDuration}
-              onChange={handleCustomDurationChange}
-            />
-            <span>min</span>
-            <button type="submit">Definir</button>
-          </form>
-        </aside>
+        <QuickStats stats={quickStats} />
+        <Clock
+          value={timerValue}
+          scale={radialScale}
+          radialProgressStyle={radialProgressStyle}
+          finished={hasFinished}
+        />
+        <DurationControls
+          presets={durationPresets}
+          selectedDuration={selectedDuration}
+          customDuration={customDuration}
+          onSelectDuration={handleDurationSelect}
+          onCustomDurationChange={handleCustomDurationChange}
+          onCustomDurationSubmit={handleCustomDurationSubmit}
+        />
       </div>
 
       <div className={styles.controls}>
