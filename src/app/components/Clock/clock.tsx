@@ -6,19 +6,15 @@ import styles from "./clock.module.css";
 
 interface ClockProps {
   value: string;
-  scale: number;
+  scale?: number;
   radialProgressStyle: CSSProperties;
   finished?: boolean;
 }
 
-export function Clock({ value, scale, radialProgressStyle, finished = false }: ClockProps) {
+export function Clock({ value, radialProgressStyle, finished = false }: ClockProps) {
   return (
     <div className={styles.clock}>
-      <div
-        className={styles.radialWrapper}
-        style={{ transform: `scale(${scale})` }}
-        data-finished={finished}
-      >
+      <div className={styles.radialWrapper} data-finished={finished}>
         <span className={styles.radialGlow} />
         <span className={styles.radialBase} />
         <span className={styles.radialProgress} style={radialProgressStyle} />
