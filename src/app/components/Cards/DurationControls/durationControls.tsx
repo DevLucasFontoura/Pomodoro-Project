@@ -23,6 +23,7 @@ export function DurationControls({
 }: DurationControlsProps) {
   return (
     <aside className={styles.durationControls}>
+      <h3 className={styles.title}>Ajustes rápidos</h3>
       <div className={styles.durationSelector}>
         {presets.map((minutes) => {
           const isActive = minutes === selectedDuration;

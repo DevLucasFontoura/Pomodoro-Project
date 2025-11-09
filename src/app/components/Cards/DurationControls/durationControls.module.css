@@ -15,6 +15,15 @@
   padding-right: clamp(2.1rem, 4.4vw, 3.1rem);
 }
 
+.title {
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-muted);
+  margin: 0.25rem 0 0.35rem;
+}
+
 .durationSelector {
   display: flex;
   align-items: center;
@@ -161,6 +170,10 @@
     width: 100%;
     max-width: 420px;
     padding: 1.25rem 1.5rem;
+  }
+
+  .title {
+    letter-spacing: 0.18em;
   }
 
   .durationSelector {

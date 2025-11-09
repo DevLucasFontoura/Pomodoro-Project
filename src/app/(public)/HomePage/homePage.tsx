@@ -26,6 +26,7 @@ export default function HomePage() {
       { id: "focus", label: "Focus", isActive: true },
       { id: "short-break", label: "Short break" },
       { id: "long-break", label: "Long break" },
+      { id: "settings", label: "Settings" },
     ],
     [],
   );
@@ -101,12 +102,6 @@ export default function HomePage() {
     setIsRunning(true);
   }, [isRunning, remainingSeconds, totalDurationSeconds]);
 
-  const handleQuickAdjust = useCallback(() => {
-    setIsRunning(false);
-    setRemainingSeconds(totalDurationSeconds);
-    setHasFinished(false);
-  }, [totalDurationSeconds]);
-
   const handleDurationSelect = useCallback(
     (minutes: number) => {
       if (minutes === selectedDuration) return;
@@ -134,6 +129,25 @@ export default function HomePage() {
     [customDuration, setSelectedDuration],
   );
 
+  const handleResumeFocus = useCallback(() => {
+    if (isRunning) return;
+    if (remainingSeconds === 0) {
+      setRemainingSeconds(totalDurationSeconds);
+    }
+    setHasFinished(false);
+    setIsRunning(true);
+  }, [isRunning, remainingSeconds, totalDurationSeconds]);
+
+  const handleResetFocus = useCallback(() => {
+    setIsRunning(false);
+    setHasFinished(false);
+    setRemainingSeconds(totalDurationSeconds);
+  }, [totalDurationSeconds]);
+
+  const hasStarted = remainingSeconds !== totalDurationSeconds;
+  const canResume = hasStarted && !isRunning && remainingSeconds > 0;
+  const canReset = hasStarted || isRunning || hasFinished;
+
   return (
     <section className={styles.hero}>
       <span className={styles.cornerBrand}>
@@ -144,20 +158,20 @@ export default function HomePage() {
 
       <div className={styles.timerRegion}>
         <div className={styles.timerStats}>
-          <QuickStats stats={quickStats} />
+          {/* <QuickStats stats={quickStats} /> */}
         </div>
         <div className={styles.timerClock}>
           <Clock value={timerValue} progress={progress} finished={hasFinished} />
         </div>
         <div className={styles.timerControls}>
-          <DurationControls
+          {/* <DurationControls
             presets={durationPresets}
             selectedDuration={selectedDuration}
             customDuration={customDuration}
             onSelectDuration={handleDurationSelect}
             onCustomDurationChange={handleCustomDurationChange}
             onCustomDurationSubmit={handleCustomDurationSubmit}
-          />
+          /> */}
         </div>
       </div>
 
@@ -165,9 +179,26 @@ export default function HomePage() {
         <button type="button" className={styles.primaryButton} onClick={handlePrimaryAction}>
           {primaryLabel}
         </button>
-        <button type="button" className={styles.secondaryButton} onClick={handleQuickAdjust}>
-          Ajustes rápidos
-        </button>
+        {hasStarted ? (
+          <>
+            <button
+              type="button"
+              className={styles.secondaryButton}
+              onClick={handleResumeFocus}
+              disabled={!canResume}
+            >
+              Retomar foco
+            </button>
+            <button
+              type="button"
+              className={styles.secondaryButton}
+              onClick={handleResetFocus}
+              disabled={!canReset}
+            >
+              Reiniciar foco
+            </button>
+          </>
+        ) : null}
       </div>
     </section>
   );

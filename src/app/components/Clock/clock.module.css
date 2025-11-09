@@ -57,20 +57,6 @@
   display: none;
 }
 
-.radialTicks {
-  position: absolute;
-  inset: clamp(0.5%, 0.8vw, 1.2%);
-  border-radius: 50%;
-  mask: radial-gradient(circle at 50% 50%, transparent 62%, black 63%);
-  background:
-    repeating-conic-gradient(
-      from -90deg,
-      rgba(58, 232, 255, 0.42) 0deg 2deg,
-      transparent 2deg 6deg
-    );
-  opacity: 0.25;
-}
-
 .timerValue {
   position: relative;
   font-size: clamp(3.75rem, 11vw, 6rem);
@@ -123,6 +109,21 @@
 @media (max-width: 1024px) {
   .clock {
     min-height: auto;
+  }
+}
+
+@media (max-height: 840px) and (min-width: 720px) {
+  .clock {
+    width: clamp(240px, 42vw, 400px);
+    min-height: clamp(260px, 44vw, 400px);
+  }
+
+  .radialWrapper {
+    width: clamp(220px, 44vw, 400px);
+  }
+
+  .timerValue {
+    font-size: clamp(3.25rem, 9vw, 5.25rem);
   }
 }
 

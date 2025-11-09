@@ -108,7 +108,6 @@ export function Clock({ value, progress, finished = false }: ClockProps) {
         <span className={styles.radialGlow} />
         <span className={styles.radialBase} />
         <RadialProgress progress={progress} />
-        <span className={styles.radialTicks} />
         <span className={styles.timerValue}>{value}</span>
       </div>
     </div>

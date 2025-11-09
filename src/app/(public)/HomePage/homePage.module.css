@@ -16,7 +16,7 @@
   grid-template-rows: auto auto auto 1fr auto auto;
   align-items: center;
   justify-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: clamp(2rem, 6vw, 3.5rem);
   padding-top: clamp(6rem, 12vw, 8rem);
   gap: clamp(2rem, 5vw, 3rem);
@@ -27,6 +27,7 @@
     var(--page-bg);
   color: var(--text-primary);
   font-family: "JetBrains Mono", monospace;
+  overflow: hidden;
 }
 
 .timerRegion {
@@ -136,6 +137,15 @@
   box-shadow: 0 0 0 3px rgba(58, 232, 255, 0.35);
 }
 
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  pointer-events: none;
+}
+
 .cornerBrand {
   position: absolute;
   top: clamp(1.5rem, 4vw, 2.75rem);
@@ -163,6 +173,10 @@
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--text-muted);
+}
+
+.hero {
+  overflow: hidden;
 }
 
 @media (max-width: 1360px) {
@@ -199,6 +213,63 @@
   .timerControls {
     justify-self: stretch;
     max-width: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .hero {
+    padding-top: clamp(4.75rem, 10vw, 6.25rem);
+    gap: clamp(1.75rem, 5vw, 2.5rem);
+  }
+
+  .timerRegion {
+    width: min(920px, 94vw);
+    column-gap: clamp(1.75rem, 5vw, 3rem);
+  }
+}
+
+@media (max-height: 840px) and (min-width: 960px) {
+  .hero {
+    min-height: 100dvh;
+    padding-top: clamp(4rem, 8vw, 5.5rem);
+    padding-bottom: clamp(1.5rem, 5vw, 2.5rem);
+    gap: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .timerRegion {
+    padding: clamp(1.75rem, 5vw, 2.6rem);
+  }
+
+  .controls {
+    gap: 0.75rem;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    padding: 0.75rem 1.6rem;
+  }
+}
+
+@media (max-height: 720px) {
+  .hero {
+    padding-top: clamp(3.25rem, 7vw, 4rem);
+    padding-bottom: clamp(0.9rem, 4vw, 1.6rem);
+    gap: clamp(1.1rem, 3.5vw, 1.8rem);
+  }
+
+  .timerRegion {
+    padding: clamp(1.4rem, 5vw, 2.1rem);
+    row-gap: clamp(1.1rem, 4vw, 1.8rem);
+  }
+
+  .controls {
+    gap: 0.65rem;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    padding: 0.7rem 1.45rem;
+    letter-spacing: 0.06em;
   }
 }
 
