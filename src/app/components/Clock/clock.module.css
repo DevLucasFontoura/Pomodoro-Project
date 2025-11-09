@@ -1,13 +1,13 @@
 .clock {
   display: grid;
   place-items: center;
-  width: clamp(300px, 48vw, 440px);
-  min-height: clamp(320px, 50vw, 460px);
+  width: clamp(260px, 48vw, 440px);
+  min-height: clamp(280px, 52vw, 460px);
 }
 
 .radialWrapper {
   position: relative;
-  width: clamp(280px, 50vw, 440px);
+  width: clamp(240px, 52vw, 440px);
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   display: grid;
@@ -27,7 +27,7 @@
 
 .radialBase {
   position: absolute;
-  inset: 14%;
+  inset: clamp(12%, 3vw, 14%);
   border-radius: 50%;
   border: 1px solid rgba(58, 232, 255, 0.12);
   background: radial-gradient(circle at 50% 50%, rgba(12, 16, 18, 0.9), rgba(9, 12, 14, 0.9));
@@ -36,23 +36,30 @@
 
 .radialProgress {
   position: absolute;
-  inset: 6%;
+  inset: clamp(10px, 1.8vw, 20px);
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, transparent 68%, rgba(12, 16, 18, 1) 69%),
-    conic-gradient(
-      from -90deg,
-      var(--glow-cyan) 0deg,
-      var(--glow-purple) 180deg,
-      rgba(58, 232, 255, 0.25) 270deg,
-      transparent 270deg
-    );
-  animation: orbitProgressAnim 10s linear infinite;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 16px rgba(74, 146, 255, 0.14))
+    drop-shadow(0 0 8px rgba(74, 146, 255, 0.1));
+}
+
+.radialProgress :global(.recharts-wrapper) {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.radialProgress :global(.recharts-surface) {
+  overflow: visible;
+}
+
+.radialProgress :global(.recharts-radial-bar-background-sector) {
+  display: none;
 }
 
 .radialTicks {
   position: absolute;
-  inset: 1%;
+  inset: clamp(0.5%, 0.8vw, 1.2%);
   border-radius: 50%;
   mask: radial-gradient(circle at 50% 50%, transparent 62%, black 63%);
   background:
@@ -73,15 +80,6 @@
   text-shadow: 0 0 35px rgba(58, 232, 255, 0.45);
 }
 
-@keyframes orbitProgressAnim {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes orbitGlowPulse {
   0%,
   100% {
@@ -89,6 +87,36 @@
   }
   50% {
     opacity: 0.35;
+  }
+}
+
+@media (max-width: 960px) {
+  .clock {
+    width: clamp(240px, 70vw, 420px);
+    min-height: clamp(260px, 72vw, 420px);
+  }
+
+  .radialWrapper {
+    width: clamp(220px, 70vw, 420px);
+  }
+}
+
+@media (max-width: 640px) {
+  .clock {
+    width: clamp(220px, 82vw, 360px);
+    min-height: clamp(240px, 82vw, 360px);
+  }
+
+  .radialWrapper {
+    width: clamp(210px, 82vw, 360px);
+  }
+
+  .radialBase {
+    inset: clamp(16%, 5vw, 18%);
+  }
+
+  .timerValue {
+    font-size: clamp(3rem, 15vw, 4.5rem);
   }
 }
 

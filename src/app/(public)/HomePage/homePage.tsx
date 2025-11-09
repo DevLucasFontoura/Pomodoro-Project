@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  type ChangeEvent,
-  type CSSProperties,
-  type FormEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { type ChangeEvent, type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { DurationControls } from "@/app/components/Cards/DurationControls/durationControls";
 import { QuickStats } from "@/app/components/Cards/QuickStats/quickStats";
@@ -83,30 +75,6 @@ export default function HomePage() {
     return remainingSeconds / totalDurationSeconds;
   }, [remainingSeconds, totalDurationSeconds]);
 
-  const radialScale = useMemo(() => {
-    if (hasFinished) return 0.15;
-    const scaled = 0.45 + progress * 0.55;
-    return Math.min(1, parseFloat(scaled.toFixed(3)));
-  }, [hasFinished, progress]);
-
-  const radialProgressStyle = useMemo(() => {
-    const clampedProgress = Math.min(Math.max(progress, 0), 1);
-    const sweepDegrees =
-      clampedProgress >= 0.999 ? 359.999 : clampedProgress <= 0.001 ? 0 : clampedProgress * 360;
-    return {
-      background: `
-        radial-gradient(circle at 50% 50%, transparent 68%, rgba(12, 16, 18, 1) 69%),
-        conic-gradient(
-          from -90deg,
-          var(--glow-cyan) 0deg,
-          var(--glow-purple) ${sweepDegrees.toFixed(2)}deg,
-          rgba(58, 232, 255, 0.12) ${sweepDegrees.toFixed(2)}deg,
-          transparent ${sweepDegrees.toFixed(2)}deg
-        )
-      `,
-    } as CSSProperties;
-  }, [progress]);
-
   const timerValue = useMemo(() => formatTime(remainingSeconds), [remainingSeconds]);
 
   const primaryLabel = useMemo(() => {
@@ -175,21 +143,22 @@ export default function HomePage() {
       <span className={styles.cornerVersion}>v1.0</span>
 
       <div className={styles.timerRegion}>
-        <QuickStats stats={quickStats} />
-        <Clock
-          value={timerValue}
-          scale={radialScale}
-          radialProgressStyle={radialProgressStyle}
-          finished={hasFinished}
-        />
-        <DurationControls
-          presets={durationPresets}
-          selectedDuration={selectedDuration}
-          customDuration={customDuration}
-          onSelectDuration={handleDurationSelect}
-          onCustomDurationChange={handleCustomDurationChange}
-          onCustomDurationSubmit={handleCustomDurationSubmit}
-        />
+        <div className={styles.timerStats}>
+          <QuickStats stats={quickStats} />
+        </div>
+        <div className={styles.timerClock}>
+          <Clock value={timerValue} progress={progress} finished={hasFinished} />
+        </div>
+        <div className={styles.timerControls}>
+          <DurationControls
+            presets={durationPresets}
+            selectedDuration={selectedDuration}
+            customDuration={customDuration}
+            onSelectDuration={handleDurationSelect}
+            onCustomDurationChange={handleCustomDurationChange}
+            onCustomDurationSubmit={handleCustomDurationSubmit}
+          />
+        </div>
       </div>
 
       <div className={styles.controls}>
