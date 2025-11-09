@@ -2,10 +2,10 @@
 
 import { type ChangeEvent, type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-import { DurationControls } from "@/app/components/Cards/DurationControls/durationControls";
-import { QuickStats } from "@/app/components/Cards/QuickStats/quickStats";
-import { Clock } from "@/app/components/Clock/clock";
-import { TopBar } from "@/app/components/TopBar/topBar";
+import { DurationControls } from "@/components/Cards/DurationControls/durationControls";
+import { QuickStats } from "@/components/Cards/QuickStats/quickStats";
+import { Clock } from "@/components/Clock/clock";
+import { TopBar } from "@/components/TopBar/topBar";
 
 import styles from "./homePage.module.css";
 
@@ -21,15 +21,6 @@ function formatTime(totalSeconds: number) {
 
 export default function HomePage() {
   const durationPresets = useMemo(() => [15, 25, 45], []);
-  const phases = useMemo(
-    () => [
-      { id: "focus", label: "Focus", isActive: true },
-      { id: "short-break", label: "Short break" },
-      { id: "long-break", label: "Long break" },
-      { id: "settings", label: "Settings" },
-    ],
-    [],
-  );
   const quickStats = useMemo(
     () => [
       { label: "Sessões hoje", value: "3" },
@@ -43,6 +34,18 @@ export default function HomePage() {
   const [isRunning, setIsRunning] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
   const [customDuration, setCustomDuration] = useState<string>(() => `${durationPresets[1]}`);
+  const [activePhase, setActivePhase] = useState("focus");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const phases = useMemo(
+    () => [
+      { id: "focus", label: "Focus", isActive: activePhase === "focus" },
+      { id: "short-break", label: "Short break", isActive: activePhase === "short-break" },
+      { id: "long-break", label: "Long break", isActive: activePhase === "long-break" },
+      { id: "settings", label: "Settings", isActive: isSettingsOpen },
+    ],
+    [activePhase, isSettingsOpen],
+  );
 
   const totalDurationSeconds = useMemo(() => selectedDuration * 60, [selectedDuration]);
 
@@ -104,10 +107,12 @@ export default function HomePage() {
 
   const handleDurationSelect = useCallback(
     (minutes: number) => {
-      if (minutes === selectedDuration) return;
-      setSelectedDuration(minutes);
+      if (minutes !== selectedDuration) {
+        setSelectedDuration(minutes);
+      }
+      setIsSettingsOpen(false);
     },
-    [selectedDuration],
+    [selectedDuration, setIsSettingsOpen, setSelectedDuration],
   );
 
   const handleCustomDurationChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -125,8 +130,9 @@ export default function HomePage() {
       if (!Number.isFinite(parsedMinutes)) return;
 
       setSelectedDuration(parsedMinutes);
+      setIsSettingsOpen(false);
     },
-    [customDuration, setSelectedDuration],
+    [customDuration, setSelectedDuration, setIsSettingsOpen],
   );
 
   const handleResumeFocus = useCallback(() => {
@@ -147,31 +153,47 @@ export default function HomePage() {
   const hasStarted = remainingSeconds !== totalDurationSeconds;
   const canResume = hasStarted && !isRunning && remainingSeconds > 0;
   const canReset = hasStarted || isRunning || hasFinished;
+  const handleSelectPhase = useCallback(
+    (phaseId: string) => {
+      if (phaseId === "settings") {
+        setIsSettingsOpen((prev) => !prev);
+        return;
+      }
+      setActivePhase(phaseId);
+      setIsSettingsOpen(false);
+    },
+    [setActivePhase, setIsSettingsOpen],
+  );
 
   return (
     <section className={styles.hero}>
       <span className={styles.cornerBrand}>
         pomodoro<span>mono</span>
       </span>
-      <TopBar phases={phases} />
+      <TopBar phases={phases} onSelectPhase={handleSelectPhase} />
       <span className={styles.cornerVersion}>v1.0</span>
+
+      {isSettingsOpen ? (
+        <div className={styles.settingsPopover}>
+          <div className={styles.settingsCard}>
+            <DurationControls
+              presets={durationPresets}
+              selectedDuration={selectedDuration}
+              customDuration={customDuration}
+              onSelectDuration={handleDurationSelect}
+              onCustomDurationChange={handleCustomDurationChange}
+              onCustomDurationSubmit={handleCustomDurationSubmit}
+            />
+          </div>
+        </div>
+      ) : null}
 
       <div className={styles.timerRegion}>
         <div className={styles.timerStats}>
-          {/* <QuickStats stats={quickStats} /> */}
+          <QuickStats stats={quickStats} />
         </div>
         <div className={styles.timerClock}>
           <Clock value={timerValue} progress={progress} finished={hasFinished} />
-        </div>
-        <div className={styles.timerControls}>
-          {/* <DurationControls
-            presets={durationPresets}
-            selectedDuration={selectedDuration}
-            customDuration={customDuration}
-            onSelectDuration={handleDurationSelect}
-            onCustomDurationChange={handleCustomDurationChange}
-            onCustomDurationSubmit={handleCustomDurationSubmit}
-          /> */}
         </div>
       </div>
 
