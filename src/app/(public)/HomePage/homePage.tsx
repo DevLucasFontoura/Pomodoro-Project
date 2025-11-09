@@ -165,28 +165,39 @@ export default function HomePage() {
     [setActivePhase, setIsSettingsOpen],
   );
 
+  const settingsContent = (
+    <DurationControls
+      presets={durationPresets}
+      selectedDuration={selectedDuration}
+      customDuration={customDuration}
+      onSelectDuration={handleDurationSelect}
+      onCustomDurationChange={handleCustomDurationChange}
+      onCustomDurationSubmit={handleCustomDurationSubmit}
+    />
+  );
+
+  const handleSettingsOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        setIsSettingsOpen(false);
+      }
+    },
+    [],
+  );
+
   return (
     <section className={styles.hero}>
       <span className={styles.cornerBrand}>
         pomodoro<span>mono</span>
       </span>
-      <TopBar phases={phases} onSelectPhase={handleSelectPhase} />
+      <TopBar
+        phases={phases}
+        onSelectPhase={handleSelectPhase}
+        settingsContent={settingsContent}
+        settingsOpen={isSettingsOpen}
+        onSettingsOpenChange={handleSettingsOpenChange}
+      />
       <span className={styles.cornerVersion}>v1.0</span>
-
-      {isSettingsOpen ? (
-        <div className={styles.settingsPopover}>
-          <div className={styles.settingsCard}>
-            <DurationControls
-              presets={durationPresets}
-              selectedDuration={selectedDuration}
-              customDuration={customDuration}
-              onSelectDuration={handleDurationSelect}
-              onCustomDurationChange={handleCustomDurationChange}
-              onCustomDurationSubmit={handleCustomDurationSubmit}
-            />
-          </div>
-        </div>
-      ) : null}
 
       <div className={styles.timerRegion}>
         <div className={styles.timerStats}>

@@ -58,6 +58,26 @@
   box-shadow: 0 15px 35px rgba(58, 232, 255, 0.35);
 }
 
+.settingsContent {
+  width: min(420px, 90vw);
+  padding: clamp(1rem, 2.2vw, 1.4rem);
+  border-radius: 20px;
+  background: rgba(10, 14, 18, 0.92);
+  border: 1px solid rgba(58, 232, 255, 0.24);
+  box-shadow:
+    0 26px 68px rgba(0, 0, 0, 0.35),
+    inset 0 0 32px rgba(58, 232, 255, 0.15);
+  backdrop-filter: blur(14px);
+}
+
+.settingsContent :global(.durationControls) {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: clamp(0.85rem, 2.4vw, 1.3rem) clamp(1.1rem, 3vw, 1.6rem);
+  box-shadow: none;
+}
+
 @media (max-width: 600px) {
   .phases {
     flex-direction: column;
