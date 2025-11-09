@@ -19,6 +19,7 @@ function RadialProgress({ progress }: { progress: number }) {
   const gradientId = `clock-progress-${gradientBaseId}`;
 
   const chartData = useMemo(() => [{ name: "arc", value: 100 }], []);
+  const arcOpacity = 0.25 + clampedProgress * 0.75;
 
   return (
     <div className={styles.radialProgress}>
@@ -27,13 +28,13 @@ function RadialProgress({ progress }: { progress: number }) {
           data={chartData}
           startAngle={90}
           endAngle={endAngle}
-          innerRadius="72%"
+          innerRadius="78%"
           outerRadius="88%"
         >
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="var(--glow-cyan)" />
-              <stop offset="100%" stopColor="var(--glow-purple)" />
+              <stop offset="0%" stopColor="var(--glow-cyan)" stopOpacity={arcOpacity} />
+              <stop offset="100%" stopColor="var(--glow-purple)" stopOpacity={arcOpacity} />
             </linearGradient>
           </defs>
           {clampedProgress > 0 ? (
@@ -41,6 +42,7 @@ function RadialProgress({ progress }: { progress: number }) {
               dataKey="value"
               cornerRadius={999}
               fill={`url(#${gradientId})`}
+              fillOpacity={arcOpacity}
               isAnimationActive={false}
             />
           ) : null}
