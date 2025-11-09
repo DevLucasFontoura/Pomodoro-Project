@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { RadialBar, RadialBarChart, ResponsiveContainer } from "recharts";
 
 import styles from "./clock.module.css";
@@ -13,16 +13,65 @@ interface ClockProps {
 
 function RadialProgress({ progress }: { progress: number }) {
   const clampedProgress = Math.min(Math.max(progress, 0), 1);
-  const sweep = clampedProgress * 360;
-  const endAngle = clampedProgress <= 0 ? 89.999 : 90 - sweep;
   const gradientBaseId = useId().replace(/:/g, "");
   const gradientId = `clock-progress-${gradientBaseId}`;
 
   const chartData = useMemo(() => [{ name: "arc", value: 100 }], []);
-  const arcOpacity = 0.25 + clampedProgress * 0.75;
+  const [animatedProgress, setAnimatedProgress] = useState(clampedProgress);
+  const animationRef = useRef<number | null>(null);
+  const animatedValueRef = useRef(clampedProgress);
+
+  useEffect(() => {
+    const startValue = animatedValueRef.current;
+    const target = clampedProgress;
+    if (Math.abs(target - startValue) < 0.0005) {
+      setAnimatedProgress(target);
+      animatedValueRef.current = target;
+      return;
+    }
+
+    const duration = 520;
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+    const startTime = performance.now();
+
+    const step = (time: number) => {
+      const elapsed = time - startTime;
+      const ratio = Math.min(1, elapsed / duration);
+      const eased = easeOut(ratio);
+      const value = startValue + (target - startValue) * eased;
+      setAnimatedProgress(value);
+      animatedValueRef.current = value;
+      if (ratio < 1) {
+        animationRef.current = requestAnimationFrame(step);
+      } else {
+        setAnimatedProgress(target);
+        animatedValueRef.current = target;
+      }
+    };
+
+    if (animationRef.current !== null) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+    animationRef.current = requestAnimationFrame(step);
+
+    return () => {
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [clampedProgress]);
+
+  const sweep = animatedProgress * 360;
+  const endAngle = animatedProgress <= 0 ? 89.999 : 90 - sweep;
+  const arcOpacity = 0.25 + animatedProgress * 0.75;
 
   return (
-    <div className={styles.radialProgress}>
+    <div
+      className={styles.radialProgress}
+      style={{ transition: "transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms" }}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RadialBarChart
           data={chartData}
@@ -37,7 +86,7 @@ function RadialProgress({ progress }: { progress: number }) {
               <stop offset="100%" stopColor="var(--glow-purple)" stopOpacity={arcOpacity} />
             </linearGradient>
           </defs>
-          {clampedProgress > 0 ? (
+          {animatedProgress > 0 ? (
             <RadialBar
               dataKey="value"
               cornerRadius={999}
